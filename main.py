@@ -190,6 +190,53 @@ def afficher_gameover(game):
 
         clock.tick(60)  # Limiter la boucle à 60 images par seconde
 
+def afficher_gameover_esiee(game):
+    # Charger l'image du game over
+    gameover_image = pygame.image.load(os.path.join("assets", "Game-OverEsiee.png"))
+    gameover_rect = gameover_image.get_rect()
+
+# Charger l'image du bouton
+    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer.png"))
+
+    bouton1_rect = bouton_image1.get_rect()
+
+    bouton1_x = 185
+
+    bouton_y = HEIGHT - bouton1_rect.height - 75
+
+    running = True
+    clock = pygame.time.Clock()
+
+    bouton_en_surbrillance = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and bouton_en_surbrillance:
+                    pygame.quit()
+
+        # Coordonnées du rectangle de surbrillance en fonction du bouton
+
+        # Affichage du jeu
+        game.screen.fill((0, 0, 0))  # Fond noir
+
+        # Affichage du personnage
+        game.screen.blit(gameover_image,
+                        ((WIDTH - gameover_rect.width) // 2, (HEIGHT - gameover_rect.height) // 2))
+
+        # Affichage des boutons
+        game.screen.blit(bouton_image1, (bouton1_x, bouton_y))
+
+        rectangle_surbrillance = pygame.Rect(bouton1_x - 2, bouton_y - 2, bouton1_rect.width + 4, bouton1_rect.height + 4)
+        pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance, 2)
+
+        pygame.display.flip()
+
+        clock.tick(60)  # Limiter la boucle à 60 images par seconde
+
 def afficher_dialogue_debut(game):
     dialogue_image = pygame.image.load(os.path.join("assets", "Indiana-Salle1-arrivée.png"))
     dialogue_rect = dialogue_image.get_rect()
@@ -237,6 +284,127 @@ def afficher_dialogue_debut(game):
 
         clock.tick(60)  # Limiter la boucle à 60 images par seconde
 
+def afficher_enigme_bibliotheque(game):
+    print("affichage enigme biblio")
+    # Charger l'image du personnage
+    personnage_image = pygame.image.load(os.path.join("assets", "Indiana-Bibliothèque.png"))
+    personnage_rect = personnage_image.get_rect()
+
+    # Charger l'image du bouton
+    bouton_images = [pygame.image.load(os.path.join("assets", "1995.png")), pygame.image.load(os.path.join("assets", "1988.png")), pygame.image.load(os.path.join("assets", "2005.png")), pygame.image.load(os.path.join("assets", "2003.png"))]
+    # Redimensionner les boutons à une taille plus petite
+    nouvelle_taille = (bouton_images[0].get_width() // 2.2, bouton_images[0].get_height() // 2.2)
+    bouton_images = [pygame.transform.scale(img, nouvelle_taille) for img in bouton_images]
+
+    # Rectangles des boutons
+    bouton_rects = [img.get_rect() for img in bouton_images]
+
+    # Positions initiales des boutons
+    boutons_x = [150, 450, 150, 450]
+    boutons_y = [HEIGHT - bouton_rects[0].height - 150, HEIGHT - bouton_rects[1].height - 150,
+                 HEIGHT - bouton_rects[2].height - 70, HEIGHT - bouton_rects[3].height - 70]
+
+    running = True
+    clock = pygame.time.Clock()
+
+    bouton_en_surbrillance = 0  # 0 pour aucun bouton, 1-4 pour les boutons respectifs
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if bouton_en_surbrillance == 1:
+                        game.trigger_gameover_esiee()
+                    elif bouton_en_surbrillance == 2:
+                        running = False
+                        game.trigger_choix_1988()
+                    elif bouton_en_surbrillance == 3:
+                        game.trigger_gameover_esiee()
+                    elif bouton_en_surbrillance == 4:
+                        game.trigger_gameover_esiee()
+
+                elif event.key == pygame.K_z:
+                    bouton_en_surbrillance = 1
+                elif event.key == pygame.K_s:
+                    bouton_en_surbrillance = 2
+                elif event.key == pygame.K_q:
+                    bouton_en_surbrillance = 3
+                elif event.key == pygame.K_d:
+                    bouton_en_surbrillance = 4
+
+        # Mise à jour du jeu
+
+        # Affichage du jeu
+        game.screen.fill((0, 0, 0))  # Fond noir
+
+        # Affichage du personnage
+        game.screen.blit(personnage_image,
+                         ((WIDTH - personnage_rect.width) // 2, (HEIGHT - personnage_rect.height) // 2))
+
+        # Affichage des boutons en surbrillance
+        for i in range(1, 5):
+            if bouton_en_surbrillance == i:
+                rectangle_surbrillance = pygame.Rect(boutons_x[i - 1] - 2, boutons_y[i - 1] - 2,
+                                                     bouton_rects[i - 1].width + 4, bouton_rects[i - 1].height + 4)
+                pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance, 2)
+
+        # Affichage des boutons
+        for i in range(4):
+            game.screen.blit(bouton_images[i], (boutons_x[i], boutons_y[i]))
+
+        pygame.display.flip()
+
+        clock.tick(60)  # Limiter la boucle à 60 images par seconde
+
+def afficher_choix_1988(game):
+    dialogue_image = pygame.image.load(os.path.join("assets", "Indiana-Bibliothèque-bon.png"))
+    dialogue_rect = dialogue_image.get_rect()
+
+    # Charger l'image du bouton
+    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer.png"))
+
+    bouton1_rect = bouton_image1.get_rect()
+
+    bouton1_x = 185
+
+    bouton_y = HEIGHT - bouton1_rect.height - 75
+
+    running = True
+    clock = pygame.time.Clock()
+
+    bouton_en_surbrillance = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and bouton_en_surbrillance:
+                    running = False
+
+        # Coordonnées du rectangle de surbrillance en fonction du bouton
+
+        # Affichage du jeu
+        game.screen.fill((0, 0, 0))  # Fond noir
+
+        # Affichage du personnage
+        game.screen.blit(dialogue_image,
+                         ((WIDTH - dialogue_rect.width) // 2, (HEIGHT - dialogue_rect.height) // 2))
+
+        # Affichage des boutons
+        game.screen.blit(bouton_image1, (bouton1_x, bouton_y))
+
+        rectangle_surbrillance = pygame.Rect(bouton1_x - 2, bouton_y - 2, bouton1_rect.width + 4,
+                                             bouton1_rect.height + 4)
+        pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance, 2)
+
+        pygame.display.flip()
+
+        clock.tick(60)  # Limiter la boucle à 60 images par seconde
 class Game:
     def __init__(self):
         # Création de la fenêtre du jeu
@@ -330,12 +498,20 @@ class Game:
 
     def trigger_gameover_sortie(self):
         afficher_gameover(self)
+
+    def trigger_gameover_esiee(self):
+        afficher_gameover_esiee(self)
     def reprendre_jeu(self):
         self.paused = False
 
     def trigger_dialogue_debut(self):
         afficher_dialogue_debut(self)
 
+    def trigger_enigme_bibliotheque(self):
+        afficher_enigme_bibliotheque(self)
+
+    def trigger_choix_1988(self):
+        afficher_choix_1988(self)
 
 # Ajout de la classe SortieEvents pour gérer les événements de sortie
 class SortieEvents(pygame.sprite.Group):
