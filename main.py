@@ -317,14 +317,14 @@ def afficher_enigme_bibliotheque(game):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     if bouton_en_surbrillance == 1:
-                        game.trigger_gameover_esiee()
+                        game.trigger_mauvais_biblio()
                     elif bouton_en_surbrillance == 2:
                         running = False
                         game.trigger_choix_1988()
                     elif bouton_en_surbrillance == 3:
-                        game.trigger_gameover_esiee()
+                        game.trigger_mauvais_biblio()
                     elif bouton_en_surbrillance == 4:
-                        game.trigger_gameover_esiee()
+                        game.trigger_mauvais_biblio()
 
                 elif event.key == pygame.K_z:
                     bouton_en_surbrillance = 1
@@ -405,6 +405,53 @@ def afficher_choix_1988(game):
         pygame.display.flip()
 
         clock.tick(60)  # Limiter la boucle à 60 images par seconde
+
+def afficher_mauvais_biblio(game):
+    # Charger l'image du personnage
+    personnage_image = pygame.image.load(os.path.join("assets", "Indiana-Bibliothèque-mauvais.png"))
+    personnage_rect = personnage_image.get_rect()
+
+    # Charger l'image du bouton
+    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer.png"))
+
+    bouton1_rect = bouton_image1.get_rect()
+
+    bouton1_x = 185
+
+    bouton_y = HEIGHT - bouton1_rect.height - 75
+
+    running = True
+    clock = pygame.time.Clock()
+
+    bouton_en_surbrillance = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and bouton_en_surbrillance:
+                    game.trigger_gameover_esiee()
+
+        # Coordonnées du rectangle de surbrillance en fonction du bouton
+
+        # Affichage du jeu
+        game.screen.fill((0, 0, 0))  # Fond noir
+
+        # Affichage du personnage
+        game.screen.blit(personnage_image,
+                        ((WIDTH - personnage_rect.width) // 2, (HEIGHT - personnage_rect.height) // 2))
+
+        # Affichage des boutons
+        game.screen.blit(bouton_image1, (bouton1_x, bouton_y))
+
+        rectangle_surbrillance = pygame.Rect(bouton1_x - 2, bouton_y - 2, bouton1_rect.width + 4, bouton1_rect.height + 4)
+        pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance, 2)
+
+        pygame.display.flip()
+
+        clock.tick(60)  # Limiter la boucle à 60 images par seconde
 class Game:
     def __init__(self):
         # Création de la fenêtre du jeu
@@ -446,6 +493,7 @@ class Game:
         running = True
 
         game.trigger_dialogue_debut()
+        #game.trigger_enigme_bibliotheque()
 
         while running:
             dt = clock.tick(FPS) / 1000
@@ -512,6 +560,9 @@ class Game:
 
     def trigger_choix_1988(self):
         afficher_choix_1988(self)
+
+    def trigger_mauvais_biblio(self):
+        afficher_mauvais_biblio(self)
 
 # Ajout de la classe SortieEvents pour gérer les événements de sortie
 class SortieEvents(pygame.sprite.Group):
