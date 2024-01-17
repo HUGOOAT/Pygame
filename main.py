@@ -149,13 +149,16 @@ def afficher_gameover(game):
     gameover_rect = gameover_image.get_rect()
 
 # Charger l'image du bouton
-    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer.png"))
+    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer-NB.png"))
+
+    nouvelle_taille = (bouton_image1.get_width() // 1.5, bouton_image1.get_height() // 1.5)
+    bouton_image1 = pygame.transform.scale(bouton_image1, nouvelle_taille)
 
     bouton1_rect = bouton_image1.get_rect()
 
-    bouton1_x = 185
+    bouton1_x = 640
 
-    bouton_y = HEIGHT - bouton1_rect.height - 75
+    bouton_y = HEIGHT - bouton1_rect.height - 100
 
     running = True
     clock = pygame.time.Clock()
@@ -182,9 +185,6 @@ def afficher_gameover(game):
 
         # Affichage des boutons
         game.screen.blit(bouton_image1, (bouton1_x, bouton_y))
-
-        rectangle_surbrillance = pygame.Rect(bouton1_x - 2, bouton_y - 2, bouton1_rect.width + 4, bouton1_rect.height + 4)
-        pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance, 2)
 
         pygame.display.flip()
 
@@ -196,13 +196,16 @@ def afficher_gameover_esiee(game):
     gameover_rect = gameover_image.get_rect()
 
 # Charger l'image du bouton
-    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer.png"))
+    bouton_image1 = pygame.image.load(os.path.join("assets", "Continuer-NB.png"))
+
+    nouvelle_taille = (bouton_image1.get_width() // 1.5, bouton_image1.get_height() // 1.5)
+    bouton_image1 = pygame.transform.scale(bouton_image1, nouvelle_taille)
 
     bouton1_rect = bouton_image1.get_rect()
 
-    bouton1_x = 185
+    bouton1_x = 640
 
-    bouton_y = HEIGHT - bouton1_rect.height - 75
+    bouton_y = HEIGHT - bouton1_rect.height - 100
 
     running = True
     clock = pygame.time.Clock()
@@ -229,9 +232,6 @@ def afficher_gameover_esiee(game):
 
         # Affichage des boutons
         game.screen.blit(bouton_image1, (bouton1_x, bouton_y))
-
-        rectangle_surbrillance = pygame.Rect(bouton1_x - 2, bouton_y - 2, bouton1_rect.width + 4, bouton1_rect.height + 4)
-        pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance, 2)
 
         pygame.display.flip()
 
@@ -577,12 +577,10 @@ class SortieEvents(pygame.sprite.Group):
                 sortie_event = SortieEvent(obj.x, obj.y, obj.width, obj.height)
                 self.add(sortie_event)
 
-
 class SortieEvent(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
-
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -629,7 +627,6 @@ class Player(pygame.sprite.Sprite):
 
         return any(border.rect.colliderect(new_rect) for border in game.borders)
 
-
 class Borders(pygame.sprite.Group):
     def __init__(self, tmx_data):
         super().__init__()
@@ -641,7 +638,6 @@ class Borders(pygame.sprite.Group):
             if obj.type == "colision":
                 border = Border(obj.x, obj.y, obj.width, obj.height)
                 self.add(border)
-
 
 class Border(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
