@@ -533,7 +533,7 @@ class Game:
     def __init__(self):
         # Création de la fenêtre du jeu
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Hugoat")
+        pygame.display.set_caption("Indiana Jones, a la recherche des camarades perdus")
 
         # Charger la carte Tiled
         tmx_data = pytmx.util_pygame.load_pygame(
@@ -552,6 +552,7 @@ class Game:
 
         # Charger les événements de sortie depuis la carte Tiled
         self.sortie_events = SortieEvents(tmx_data)
+        self.livres_events = LivreEvents(tmx_data)
 
         # Ajouter les bordures au groupe de calques
         self.group.add(self.borders)
@@ -564,6 +565,7 @@ class Game:
 
         # Ajout d'une variable pour savoir si l'événement de sortie a été déclenché
         self.sortie_event_triggered = False
+        self.biblio_event_triggered = False
 
     def run(self):
         clock = pygame.time.Clock()
@@ -588,7 +590,7 @@ class Game:
                 self.group.update(dt)
                 # Détection de collision avec l'événement de sortie
                 self.check_sortie_event_collision()
-
+                self.check_livre_event_collision()
                 # Définir la position de la caméra pour suivre le joueur
                 self.group.center(self.player.rect.center)
 
@@ -610,6 +612,12 @@ class Game:
             if sortie_event_collisions:
                 # Déclencher l'événement de sortie
                 self.trigger_sortie_event()
+
+    def check_livre_event_collision(self):
+        if not self.biblio_event_triggered:
+            livre_event_collision = pygame.sprite.spritecollide(self.player, self.livres_events, False)
+            if livre_event_collision:
+                self.trigger_enigme_bibliotheque()
 
     def trigger_sortie_event(self):
         # Mettez ici le code que vous voulez exécuter lorsque l'événement de sortie est déclenché
@@ -634,6 +642,7 @@ class Game:
         afficher_dialogue_debut(self)
 
     def trigger_enigme_bibliotheque(self):
+        self.biblio_event_triggered = True
         afficher_enigme_bibliotheque(self)
 
     def trigger_choix_1988(self):
@@ -658,6 +667,22 @@ class SortieEvents(pygame.sprite.Group):
                 self.add(sortie_event)
 
 class SortieEvent(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+
+class LivreEvents(pygame.sprite.Group):
+    def __init__(self, tmx_data):
+        super().__init__()
+        self.load_from_tmx_data(tmx_data)
+
+    def load_from_tmx_data(self, tmx_data):
+        for obj in tmx_data.objects:
+            if obj.type == "event_livres":
+                livre_event = LivreEvent(obj.x, obj.y, obj.width, obj.height)
+                self.add(livre_event)
+
+class LivreEvent(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
