@@ -17,6 +17,81 @@ RED = (255, 0, 0)
 DialogueDebut = False
 
 # Fonction pour afficher les boutons
+
+def afficher_menu(game):
+    # Charger l'image du personnage
+    personnage_image = pygame.image.load(os.path.join("assets", "Ecran-acceuil.png"))
+    personnage_rect = personnage_image.get_rect()
+
+    # Charger l'image du bouton
+    bouton_image1 = pygame.image.load(os.path.join("assets", "Commencer.png"))
+    bouton_image2 = pygame.image.load(os.path.join("assets", "Quitter.png"))
+    # Redimensionner le bouton à une taille plus petite
+    nouvelle_taille = (bouton_image1.get_width() // 0.7, bouton_image1.get_height() // 0.7)
+    bouton_image1 = pygame.transform.scale(bouton_image1, nouvelle_taille)
+    bouton_image2 = pygame.transform.scale(bouton_image2, nouvelle_taille)
+    bouton1_rect = bouton_image1.get_rect()
+    bouton2_rect = bouton_image2.get_rect()
+
+    # Positions initiales des boutons
+    bouton1_x = 650
+    bouton2_x = 1100
+    bouton_y = HEIGHT - bouton1_rect.height - 200
+
+    running = True
+    clock = pygame.time.Clock()
+
+    bouton_en_surbrillance = 1  # 1 pour le bouton1, 2 pour le bouton2
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if bouton_en_surbrillance == 1:
+                        # Si le bouton "rester" est en surbrillance, reprendre le jeu
+                        game.reprendre_jeu()
+                        running = False
+                    elif bouton_en_surbrillance == 2:
+                        running = False
+                        pygame.quit()
+
+                elif event.key == pygame.K_q:
+                    bouton_en_surbrillance = 1
+                elif event.key == pygame.K_d:
+                    bouton_en_surbrillance = 2
+
+        # Mise à jour du jeu
+
+        # Affichage du jeu
+        game.screen.fill((0, 0, 0))  # Fond noir
+
+        # Affichage du personnage
+        game.screen.blit(personnage_image,
+                         ((WIDTH - personnage_rect.width) // 2, (HEIGHT - personnage_rect.height) // 2))
+
+        # Affichage du bouton1 en surbrillance
+        if bouton_en_surbrillance == 1:
+            rectangle_surbrillance1 = pygame.Rect(bouton1_x - 2, bouton_y - 2, bouton1_rect.width + 4,
+                                                  bouton1_rect.height + 4)
+            pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance1, 2)
+
+        # Affichage du bouton2 en surbrillance
+        elif bouton_en_surbrillance == 2:
+
+            rectangle_surbrillance2 = pygame.Rect(bouton2_x - 2, bouton_y - 2, bouton2_rect.width + 4,
+                                                  bouton2_rect.height + 4)
+            pygame.draw.rect(game.screen, (255, 255, 255), rectangle_surbrillance2, 2)
+
+        # Affichage des boutons
+        game.screen.blit(bouton_image1, (bouton1_x, bouton_y))
+        game.screen.blit(bouton_image2, (bouton2_x, bouton_y))
+
+        pygame.display.flip()
+
+        clock.tick(60)  # Limiter la boucle à 60 images par seconde
 def afficher_boutons(game):
     print("affichage screen1")
     # Charger l'image du personnage
@@ -172,7 +247,8 @@ def afficher_gameover(game):
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN and bouton_en_surbrillance:
-                    pygame.quit()
+                    game.__init__()
+                    game.run()
 
         # Coordonnées du rectangle de surbrillance en fonction du bouton
 
@@ -219,7 +295,8 @@ def afficher_gameover_esiee(game):
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN and bouton_en_surbrillance:
-                    pygame.quit()
+                    game.__init__()
+                    game.run()
 
         # Coordonnées du rectangle de surbrillance en fonction du bouton
 
@@ -492,6 +569,7 @@ class Game:
         clock = pygame.time.Clock()
         running = True
 
+        game.trigger_afficher_menu()
         game.trigger_dialogue_debut()
         #game.trigger_enigme_bibliotheque()
 
@@ -564,6 +642,8 @@ class Game:
     def trigger_mauvais_biblio(self):
         afficher_mauvais_biblio(self)
 
+    def trigger_afficher_menu(self):
+        afficher_menu(self)
 # Ajout de la classe SortieEvents pour gérer les événements de sortie
 class SortieEvents(pygame.sprite.Group):
     def __init__(self, tmx_data):
